@@ -4,7 +4,7 @@ Bundler.setup(:default, :test)
 
 $:.unshift File.expand_path('../../lib/', __FILE__)
 require 'active_support/testing/setup_and_teardown'
-require 'live_activity'
+require 'merging-queue'
 require 'minitest/autorun'
 
 #LiveStream.config # touch config to load ORM, needed in some separate tests
@@ -23,33 +23,31 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 end
 
-class Activity < ActiveRecord::Base
-  include LiveActivity::Activity
+class QueuedTask < ActiveRecord::Base
+  include MergingQueue::QueuedTask
 
-  has_and_belongs_to_many :users
-
-  activity :new_enquiry do
+  queued_task :new_enquiry do
     actor        :User
     act_object   :Article
     act_target   :Volume
     #option       :description
   end
 
-  activity :test_description do
+  queued_task :test_description do
     actor        :User
     act_object   :Article
     act_target   :Volume
     option       :description
   end
 
-  activity :test_option do
+  queued_task :test_option do
     actor        :User
     act_object   :Article
     act_target   :Volume
     option       :country
   end
 
-  activity :test_bond_type do
+  queued_task :test_bond_type do
     actor        :User
     act_object   :Article
     act_target   :Volume
@@ -59,9 +57,7 @@ class Activity < ActiveRecord::Base
 end
 
 class User < ActiveRecord::Base
-  include LiveActivity::Actor
-
-  has_and_belongs_to_many :activities
+  include MergingQueue::Actor
 
 end
 

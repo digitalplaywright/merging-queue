@@ -1,0 +1,9 @@
+require 'active_record'
+require 'active_support'
+require 'active_support/core_ext/module/delegation.rb'
+require "merging-queue/version"
+require "merging-queue/actor"
+require "merging-queue/queued_task"
+require "merging-queue/definition"
+require "merging-queue/definition_dsl"
+require "merging-queue/errors"

@@ -1,4 +1,4 @@
-class ActivityTest < ActiveSupport::TestCase
+class QueuedTaskTest < ActiveSupport::TestCase
 
   def test_truth
     assert true
@@ -6,37 +6,25 @@ class ActivityTest < ActiveSupport::TestCase
 
   def test_register_definition
 
-    @definition = Activity.activity(:test_activity) do
+    @definition = QueuedTask.queued_task(:test_queued_task) do
       actor :user, :cache => [:full_name]
       act_object :listing, :cache => [:title, :full_address]
       act_target :listing, :cache => [:title]
     end
 
-    assert @definition.is_a?(LiveActivity::Definition)
+    assert @definition.is_a?(MergingQueue::Definition)
 
   end
 
-  def test_push_activity_to_receivers
-    _user    = User.create()
-    _user_2  = User.create()
-    _article = Article.create()
-    _volume  = Volume.create()
-
-    _activity = Activity.publish(:new_enquiry, :actor => _user, :act_object => _article, :act_target => _volume,
-                                 :receivers => [_user_2])
-    assert _activity.users.size == 1
-
-  end
-
-  def test_publish_new_activity
+  def test_publish_new_queued_task
     _user    = User.create()
     _article = Article.create()
     _volume  = Volume.create()
 
-    _activity = Activity.publish(:new_enquiry, :actor => _user, :act_object => _article, :act_target => _volume)
+    _queued_task = QueuedTask.publish(:new_enquiry, Time.now, :actor => _user, :act_object => _article, :act_target => _volume)
 
-    assert _activity.persisted?
-    #_activity.should be_an_instance_of Activity
+    assert _queued_task.persisted?
+    #_queued_task.should be_an_instance_of QueuedTask
 
   end
 
@@ -46,10 +34,10 @@ class ActivityTest < ActiveSupport::TestCase
     _volume  = Volume.create()
 
     _description = "this is a test"
-    _activity = Activity.publish(:test_description, :actor => _user, :act_object => _article, :act_target => _volume,
+    _queued_task = QueuedTask.publish(:test_description, Time.now,  :actor => _user, :act_object => _article, :act_target => _volume,
                                  :description => _description )
 
-    assert _activity.description  == _description
+    assert _queued_task.description  == _description
 
   end
 
@@ -59,10 +47,10 @@ class ActivityTest < ActiveSupport::TestCase
     _volume  = Volume.create()
 
     _country = "denmark"
-    _activity = Activity.publish(:test_option, :actor => _user, :act_object => _article, :act_target => _volume,
+    _queued_task = QueuedTask.publish(:test_option, Time.now, :actor => _user, :act_object => _article, :act_target => _volume,
                                  :country => _country )
 
-    assert _activity.options[:country]  == _country
+    assert _queued_task.options[:country]  == _country
 
   end
 
@@ -71,9 +59,28 @@ class ActivityTest < ActiveSupport::TestCase
     _article = Article.create()
     _volume  = Volume.create()
 
-    _activity = Activity.publish(:test_bond_type, :actor => _user, :act_object => _article, :act_target => _volume)
+    _queued_task = QueuedTask.publish(:test_bond_type, Time.now, :actor => _user, :act_object => _article, :act_target => _volume)
 
-    assert _activity.bond_type  == 'global'
+    assert _queued_task.bond_type  == 'global'
+
+  end
+
+  def test_poll_changes
+
+    _user    = User.create()
+    _article = Article.create()
+    _volume  = Volume.create()
+
+    QueuedTask.publish(:test_bond_type, Time.now, :actor => _user, :act_object => _article, :act_target => _volume)
+
+    assert QueuedTask.all.size > 0
+
+    QueuedTask.poll_for_changes() do |verb, hash|
+      #assert hash[:actor].id == _user.id
+    end
+
+    assert QueuedTask.all.size == 0
+
 
   end
 

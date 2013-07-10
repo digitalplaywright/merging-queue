@@ -1,9 +1,9 @@
-module LiveActivity
+module MergingQueue
   
-  class LiveActivityError < StandardError
+  class MergingQueueError < StandardError
   end
   
-  class InvalidActivity < LiveActivityError
+  class InvalidQueuedTask < MergingQueueError
   end
   
   # This error is raised when an act_object isn't defined
@@ -12,7 +12,7 @@ module LiveActivity
   # Example:
   #
   # <tt>InvalidField.new('field_name')</tt>
-  class InvalidData < LiveActivityError
+  class InvalidData < MergingQueueError
     attr_reader :message
 
     def initialize message
@@ -26,7 +26,7 @@ module LiveActivity
   # Example:
   #
   # <tt>InvalidField.new('field_name')</tt>
-  class InvalidField < LiveActivityError
+  class InvalidField < MergingQueueError
     attr_reader :message
 
     def initialize message
@@ -35,10 +35,10 @@ module LiveActivity
 
   end
   
-  class ActivityNotSaved < LiveActivityError
+  class QueuedTaskNotSaved < MergingQueueError
   end
   
-  class NoFollowersDefined < LiveActivityError
+  class NoFollowersDefined < MergingQueueError
   end
   
 end

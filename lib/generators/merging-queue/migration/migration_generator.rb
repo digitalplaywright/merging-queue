@@ -1,4 +1,4 @@
-require 'generators/live_stream'
+require 'generators/queue_collapser'
 require 'rails/generators/active_record'
 
 module LiveStream
@@ -7,7 +7,7 @@ module LiveStream
     class MigrationGenerator < ActiveRecord::Generators::Base
       extend Base
 
-      argument :name, :type => :string, :default => 'create_activities'
+      argument :name, :type => :string, :default => 'create_queued_tasks'
       # Create migration in project's folder
       def generate_files
         migration_template 'migration.rb', "db/migrate/#{name}"

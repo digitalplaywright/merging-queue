@@ -5,5 +5,5 @@ group :development, :test do
   gem "jdbc-sqlite3",  :platform => :jruby
 end
 
-# Specify your gem's dependencies in live_activity.gemspec
+# Specify your gem's dependencies in merging-queue.gemspec
 gemspec

@@ -1,7 +1,7 @@
 class DefinitionDslTest < ActiveSupport::TestCase
 
   def definition_dsl
-    LiveActivity::DefinitionDSL.new(:new_enquiry)
+    MergingQueue::DefinitionDSL.new(:new_enquiry)
   end
 
   def test_initializes_with_name

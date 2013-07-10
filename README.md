@@ -1,48 +1,37 @@
-# LiveActivity
+# MergingQueue
 
-LiveActivity is a simple Ruby activity stream gem for use with the ActiveRecord ODM framework.
+MergingQueue is a simple gem for grouping tasks by type and time using the ActiveRecord ODM framework and
+background jobs.
 
 This gem is inspired by Streama by Christopher Pappas.
 
-[![Build Status](https://secure.travis-ci.org/digitalplaywright/live-activity.png)](http://travis-ci.org/digitalplaywright/live-activity) [![Dependency Status](https://gemnasium.com/digitalplaywright/live-activity.png)](https://gemnasium.com/digitalplaywright/live-activity) [![Code Climate](https://codeclimate.com/github/digitalplaywright/live-activity.png)](https://codeclimate.com/github/digitalplaywright/live-activity)
+[![Build Status](https://secure.travis-ci.org/digitalplaywright/merging-queue.png)](http://travis-ci.org/digitalplaywright/merging-queue) [![Dependency Status](https://gemnasium.com/digitalplaywright/merging-queue.png)](https://gemnasium.com/digitalplaywright/merging-queue) [![Code Climate](https://codeclimate.com/github/digitalplaywright/merging-queue.png)](https://codeclimate.com/github/digitalplaywright/merging-queue)
 
 
 ## Install
 
-    gem install live_activity
+    gem install merging-queue
 
 ## Usage
 
-### Create migration for activities and migrate the database (in your Rails project):
+### Create migration for queued_tasks and migrate the database (in your Rails project):
 
 ```ruby
-rails g live_activity:migration
+rails g merging-queue:migration
 rake db:migrate
 ```
 
-A join table must also be created for all receivers. E.g if users are receivers:
+### Define Queued Task
+
+Create an QueuedTask model and define the queued_tasks and the fields you would like to cache within the queued_task.
+
+An queued_task consists of an actor, a verb, an act_object, and a target.
 
 ``` ruby
-create_table :activities_users, :id => false do |t|
-  t.references :activity, :user
-end
+class QueuedTask < ActiveRecord::Base
+  include MergingQueue::QueuedTask
 
-add_index :activities_users, [:activity_id, :user_id ]
-```
-
-### Define Activities
-
-Create an Activity model and define the activities and the fields you would like to cache within the activity.
-
-An activity consists of an actor, a verb, an act_object, and a target.
-
-``` ruby
-class Activity < ActiveRecord::Base
-  include LiveActivity::Activity
-
-  has_and_belongs_to_many :users
-
-  activity :new_enquiry do
+  queued_task :new_enquiry do
     actor        :User
     act_object   :Article
     act_target   :Volume
@@ -50,15 +39,15 @@ class Activity < ActiveRecord::Base
 end
 ```
 
-The activity verb is implied from the activity name, in the above example the verb is :new_enquiry
+The queued_task verb is implied from the queued_task name, in the above example the verb is :new_enquiry
 
-The act_object may be the entity performing the activity, or the entity on which the activity was performed.
+The act_object may be the entity performing the queued_task, or the entity on which the queued_task was performed.
 e.g John(actor) shared a video(act_object)
 
 The target is the act_object that the verb is enacted on.
 e.g. Geraldine(actor) posted a photo(act_object) to her album(target)
 
-This is based on the Activity Streams 1.0 specification (http://activitystrea.ms)
+This is based on the QueuedTask Streams 1.0 specification (http://queued_taskstrea.ms)
 
 ### Setup Actors
 
@@ -66,47 +55,36 @@ Include the Actor module in a class and override the default followers method.
 
 ``` ruby
 class User < ActiveRecord::Base
-  include LiveActivity::Actor
-
-  has_and_belongs_to_many :activities
+  include MergingQueue::Actor
 
 end
 ```
 
 
 
-### Publishing Activity
+### Publishing QueuedTask
 
 In your controller or background worker:
 
 ``` ruby
-current_user.publish_activity(:new_enquiry, :act_object => @enquiry, :target => @listing)
+current_user.publish_queued_task(:new_enquiry, :act_object => @enquiry, :target => @listing)
 ```
   
-This will publish the activity to the mongoid act_objects returned by the #followers method in the Actor.
+This will publish the queued_task to the mongoid act_objects returned by the #followers method in the Actor.
 
-To send your activity to different receievers, pass in an additional :receivers parameter.
 
-``` ruby
-current_user.publish_activity(:new_enquiry, :act_object => @enquiry, :target => @listing, :receivers => :friends) # calls friends method
-```
+## Retrieving QueuedTask
 
-``` ruby
-current_user.publish_activity(:new_enquiry, :act_object => @enquiry, :target => @listing, :receivers => current_user.find(:all, :conditions => {:group_id => mygroup}))
-```
-
-## Retrieving Activity
-
-To retrieve all activity for an actor
+To retrieve all queued_task for an actor
 
 ``` ruby
-current_user.activity_stream
+current_user.queued_tasks
 ```
   
-To retrieve and filter to a particular activity type
+To retrieve and filter to a particular queued_task type
 
 ``` ruby
-current_user.activity_stream(:verb => 'new_enquiry')
+current_user.queued_tasks(:verb => 'new_enquiry')
 ```
 
 #### Options
@@ -114,12 +92,10 @@ current_user.activity_stream(:verb => 'new_enquiry')
 Additional options can be required:
 
 ``` ruby
-class Activity < ActiveRecord::Base
-  include LiveActivity::Activity
+class QueuedTask < ActiveRecord::Base
+  include MergingQueue::QueuedTask
 
-  has_and_belongs_to_many :users
-
-  activity :new_enquiry do
+  queued_task :new_enquiry do
     actor        :User
     act_object   :Article
     act_target   :Volume
@@ -135,15 +111,13 @@ The option fields are stored using the ActiveRecord 'store' feature.
 #### Bond type
 
 A verb can have one bond type. This bond type can be used to classify and quickly retrieve
-activity feed items that belong to a particular aggregate feed, like e.g the global feed.
+queued_task feed items that belong to a particular aggregate feed, like e.g the global feed.
 
 ``` ruby
-class Activity < ActiveRecord::Base
-  include LiveActivity::Activity
+class QueuedTask < ActiveRecord::Base
+  include MergingQueue::QueuedTask
 
-  has_and_belongs_to_many :users
-
-  activity :new_enquiry do
+  queued_task :new_enquiry do
     actor        :User
     act_object   :Article
     act_target   :Volume

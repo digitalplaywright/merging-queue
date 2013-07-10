@@ -1,10 +1,10 @@
-module LiveActivity
+module MergingQueue
 
   class Definition
 
-    attr_reader :name, :actor, :act_object, :act_target, :grouped_actor, :bond_type, :options,  :receivers
+    attr_reader :name, :actor, :act_object, :act_target, :grouped_actor, :bond_type, :options
 
-    # @param dsl [LiveActivity::DefinitionDSL] A DSL act_object
+    # @param dsl [MergingQueue::DefinitionDSL] A DSL act_object
     def initialize(definition)
       @name             = definition[:name]
       @actor            = definition[:actor]         || nil
@@ -28,14 +28,14 @@ module LiveActivity
     end
 
     # List of registered definitions
-    # @return [Array<LiveActivity::Definition>]
+    # @return [Array<MergingQueue::Definition>]
     def self.registered
       @definitions ||= []
     end
 
     def self.find(name)
       unless definition = registered.find{|definition| definition.name == name.to_sym}
-        raise LiveActivity::InvalidActivity, "Could not find a definition for `#{name}`"
+        raise MergingQueue::InvalidQueuedTask, "Could not find a definition for `#{name}`"
       else
         definition
       end

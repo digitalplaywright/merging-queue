@@ -1,6 +1,6 @@
 require 'active_support'
 
-module LiveActivity
+module MergingQueue
 
   class DefinitionDSL
 

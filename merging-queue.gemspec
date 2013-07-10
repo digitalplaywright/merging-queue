@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "live_activity/version"
+require "merging-queue/version"
 
 Gem::Specification.new do |s|
-  s.name        = "live-activity"
-  s.version     = LiveActivity::VERSION
+  s.name        = "merging-queue"
+  s.version     = MergingQueue::VERSION
   s.authors     = ["Andreas Saebjoernsen"]
   s.email       = ["andreas.saebjoernsen@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{Activity Streams for rails}
-  s.description = %q{LiveActivity is a simple activity stream gem for use with the ActiveRecord ODM framework}
-  s.homepage    = 'https://github.com/digitalplaywright/live-activity'
+  s.summary     = %q{QueuedTask Streams for rails}
+  s.description = %q{MergingQueue is a simple gem for grouping tasks by type and time using the ActiveRecord ODM framework and background jobs}
+  s.homepage    = 'https://github.com/digitalplaywright/merging-queue'
 
-  s.rubyforge_project = "live-activity"
+  s.rubyforge_project = "merging-queue"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
