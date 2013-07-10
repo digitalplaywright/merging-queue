@@ -17,7 +17,7 @@ This gem is inspired by Streama by Christopher Pappas.
 ### Create migration for queued_tasks and migrate the database (in your Rails project):
 
 ```ruby
-rails g merging-queue:migration
+rails g merging_queue:migration
 rake db:migrate
 ```
 
