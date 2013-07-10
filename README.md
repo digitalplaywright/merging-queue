@@ -125,3 +125,22 @@ class QueuedTask < ActiveRecord::Base
   end
 end
 ```
+
+### Poll for changes and empty queue
+
+There is a poll changes interface that will group tasks by first actor and then verb. 
+
+```ruby
+QueuedTask.poll_for_changes() do |verb, hash|
+  #verb is the verb the changes are group by
+  #hash has format: {:actor          => _actor /* actor is the  */, 
+  #                  :act_objects    => act_objects    /* all objects from matching tasks */, 
+  #                  :act_object_ids => act_object_ids /* all object ids from matching tasks */,
+  #                  :act_targets    => act_targets /* all targets from  matching tasks */ , 
+  #                  :act_target_ids => act_target_ids /* all target ids from matching tasks}
+end
+```
+
+
+
+
