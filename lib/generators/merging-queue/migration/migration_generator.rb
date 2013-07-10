@@ -1,4 +1,4 @@
-require 'generators/queue_collapser'
+require 'generators/merging-queue'
 require 'rails/generators/active_record'
 
 module LiveStream
