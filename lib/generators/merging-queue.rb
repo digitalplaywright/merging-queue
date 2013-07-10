@@ -7,7 +7,7 @@ module MergingQueue
     module Base
       # Get path for migration template
       def source_root
-        @_merging-queue_source_root ||= File.expand_path(File.join('../merging-queue', generator_name, 'templates'), __FILE__)
+        @_merging_queue_source_root ||= File.expand_path(File.join('../merging_queue', generator_name, 'templates'), __FILE__)
       end
     end
   end

@@ -1,1 +1,1 @@
-../../lib/generators/merging-queue/migration/templates/migration.rb
+../../lib/generators/merging_queue/migration/templates/migration.rb
