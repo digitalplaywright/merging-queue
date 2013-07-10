@@ -7,7 +7,7 @@ require 'active_support/testing/setup_and_teardown'
 require 'merging-queue'
 require 'minitest/autorun'
 
-#LiveStream.config # touch config to load ORM, needed in some separate tests
+#MergingQueue.config # touch config to load ORM, needed in some separate tests
 
 require 'active_record'
 require 'active_record/connection_adapters/sqlite3_adapter'

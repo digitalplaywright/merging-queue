@@ -1,7 +1,7 @@
 require 'generators/merging-queue'
 require 'rails/generators/active_record'
 
-module LiveStream
+module MergingQueue
   module Generators
     # Migration generator that creates migration file from template
     class MigrationGenerator < ActiveRecord::Generators::Base
