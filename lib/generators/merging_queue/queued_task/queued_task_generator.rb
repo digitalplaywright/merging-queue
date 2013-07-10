@@ -1,4 +1,4 @@
-require 'generators/merging-queue'
+require 'generators/merging_queue'
 require 'rails/generators/active_record'
 
 module MergingQueue
