@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{QueuedTask Streams for rails}
   s.description = %q{MergingQueue is a simple gem for grouping tasks by type and time using the ActiveRecord ODM framework and background jobs}
   s.homepage    = 'https://github.com/digitalplaywright/merging-queue'
+  s.license     = 'MIT'
 
   s.rubyforge_project = "merging-queue"
 
