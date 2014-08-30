@@ -12,8 +12,8 @@ class CreateQueuedTasks < ActiveRecord::Migration
       t.string  :options
       t.string  :bond_type
 
-      t.time :publish_on
-      t.string :state
+      t.datetime :publish_on
+      t.string   :state
 
       t.timestamps
     end
