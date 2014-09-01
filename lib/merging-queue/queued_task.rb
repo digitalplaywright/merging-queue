@@ -16,26 +16,23 @@ module MergingQueue
     module ClassMethods
 
       def poll_for_changes()
-        #if block_given?
+    
+        _cur_time = DateTime.now.utc
 
-        ::QueuedTask.where('state = ? AND publish_on <= ?', 'initial', Time.now).distinct(:actor_id).each do |actor_id|
-
-          ::QueuedTask.where('state = ? AND actor_id = ? AND publish_on <= ?', 'initial', actor_id, Time.now).select(:verb).uniq.each do |verb|
-
-            changes_for_actor =  ::QueuedTask.where(:actor_id => actor_id, :state => 'initial', :verb => verb['verb'].to_s)
-
-            begin
-              yield  verb, accumulate_changes(changes_for_actor)
-
-              changes_for_actor.destroy_all
-
-            rescue ActiveRecord::RecordNotFound
-            end
-
-
+        ::QueuedTask.where('state = ? AND publish_on <= ?', 'initial',  _cur_time).pluck(:actor_id, :verb).each do |_actor_id,_verb|
+    
+          changes_for_actor = ::QueuedTask.where('state = ? AND actor_id = ? AND verb = ? AND publish_on <= ?', 'initial', _actor_id, _verb, _cur_time )
+    
+          begin
+            yield  _verb, accumulate_changes(changes_for_actor)
+    
+            changes_for_actor.destroy_all
+    
+          rescue ActiveRecord::RecordNotFound
           end
-
-
+    
+    
+    
         end
       end
 
